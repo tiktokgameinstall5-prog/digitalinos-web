@@ -1,0 +1,156 @@
+// Digitalinos SaaS — Prisma schema
+// Postgres + Prisma + NextAuth adapter
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------- NextAuth tables ----------------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------- App tables ----------------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  licenses      License[]
+  logs          Log[]
+
+  @@index([email])
+}
+
+enum Plan {
+  STARTER   // 1 month, 1 device
+  PRO       // 3 months, 1 device
+  STUDIO    // 1 year, 2 devices
+}
+
+enum LicenseStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model License {
+  id          String        @id @default(cuid())
+  key         String        @unique  // DGIT-XXXX-XXXX-XXXX-XXXX
+  userId      String
+  plan        Plan
+  maxDevices  Int           @default(1)
+  issuedAt    DateTime      @default(now())
+  expiresAt   DateTime
+  status      LicenseStatus @default(ACTIVE)
+  notes       String?
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  devices     Device[]
+
+  @@index([userId])
+  @@index([key])
+  @@index([status])
+}
+
+model Device {
+  id           String   @id @default(cuid())
+  licenseId    String
+  hardwareId   String   // sha256 of CPU+motherboard+MAC
+  platform     String?  // win32, darwin, linux
+  hostname     String?
+  appVersion   String?
+  activatedAt  DateTime @default(now())
+  lastSeenAt   DateTime @default(now())
+  releasedAt   DateTime?
+
+  license      License  @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@unique([licenseId, hardwareId])
+  @@index([hardwareId])
+}
+
+// Anonymous per-device trial counter (before signup/license)
+model TrialPing {
+  id           String   @id @default(cuid())
+  deviceFp     String   @unique  // sha256 of CPU+motherboard+MAC
+  videoCount   Int      @default(0)
+  platform     String?
+  appVersion   String?
+  firstSeenAt  DateTime @default(now())
+  lastSeenAt   DateTime @default(now())
+
+  @@index([deviceFp])
+}
+
+// Activity log for admin panel
+model Log {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String   // "login", "signup", "license.issue", "license.verify", ...
+  details   String?  @db.Text
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
