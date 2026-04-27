@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ExtensionAttrCleaner } from "@/components/extension-attr-cleaner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,22 +38,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        {/*
-          Strip attributes injected by browser extensions (Bitdefender,
-          Grammarly, etc.) that run before React hydrates and cause hydration
-          mismatches. Runs synchronously in <head>, before the React bundle.
-        */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{new MutationObserver(function(muts){muts.forEach(function(m){if(m.type==='attributes'&&/^(bis_|__processed|data-gr|data-new-gr)/.test(m.attributeName||'')){m.target.removeAttribute(m.attributeName)}})}).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['bis_skin_checked','bis_register','__processed_','data-gr-ext-installed','data-new-gr-c-s-check-loaded']})}catch(e){}})();`,
-          }}
-        />
-      </head>
       <body
         className="min-h-full flex flex-col bg-background text-foreground"
         suppressHydrationWarning
       >
+        <ExtensionAttrCleaner />
         <TooltipProvider>
           {children}
           <Toaster position="top-right" richColors />
