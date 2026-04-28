@@ -4,7 +4,9 @@ import { Logo } from "./logo";
 
 const navItems = [
   { href: "/#features", label: "Features" },
+  { href: "/#how", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/install", label: "Install" },
   { href: "/#faq", label: "FAQ" },
 ];
 

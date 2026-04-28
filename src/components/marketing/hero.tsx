@@ -53,9 +53,9 @@ export function Hero() {
           className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <Button asChild size="lg" className="h-11 px-6 text-sm font-medium">
-            <Link href="/signup">
+            <Link href="/install">
               <Download className="mr-2 size-4" />
-              Download free trial
+              Get started — free
             </Link>
           </Button>
           <Button
@@ -64,8 +64,8 @@ export function Hero() {
             variant="outline"
             className="h-11 px-6 text-sm font-medium"
           >
-            <Link href="/pricing">
-              See pricing
+            <Link href="/#how">
+              How it works
               <ArrowRight className="ml-2 size-4" />
             </Link>
           </Button>
