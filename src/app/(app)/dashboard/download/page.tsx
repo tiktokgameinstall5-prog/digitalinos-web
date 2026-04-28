@@ -57,40 +57,112 @@ const STEPS: Step[] = [
     body: (
       <>
         <p className="text-sm">
-          FFmpeg is the engine that actually encodes and merges the video
-          files. The Digitalinos app will not start without it.
+          FFmpeg is the engine that actually encodes and merges your videos.
+          The Digitalinos app will not start without it. Pick your OS below
+          and copy-paste the commands into your terminal.
         </p>
-        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">
-          <li>
-            <strong>Windows:</strong>{" "}
-            <Link
-              href="https://www.gyan.dev/ffmpeg/builds/"
-              target="_blank"
-              className="text-primary underline-offset-2 hover:underline"
-            >
-              gyan.dev FFmpeg Builds
-            </Link>{" "}
-            → download the &ldquo;release essentials&rdquo; ZIP → extract →{" "}
-            add the <code>bin</code> folder to your PATH.
-          </li>
-          <li>
-            <strong>macOS:</strong> open Terminal and run{" "}
-            <code className="rounded bg-muted/40 px-1 py-0.5 text-[0.7rem]">
-              brew install ffmpeg
-            </code>
-            .
-          </li>
-          <li>
-            <strong>Linux:</strong> run{" "}
-            <code className="rounded bg-muted/40 px-1 py-0.5 text-[0.7rem]">
-              sudo apt install ffmpeg
-            </code>{" "}
-            (Ubuntu/Debian) or your distro&apos;s equivalent.
-          </li>
-        </ul>
-        <p className="mt-3 text-xs text-muted-foreground">
-          To check it worked, open a new terminal and type{" "}
-          <code>ffmpeg -version</code> &mdash; you should see version info.
+
+        <div className="mt-4 space-y-4">
+          <div>
+            <p className="text-sm font-semibold">Windows (recommended path)</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Open <strong>PowerShell</strong> as Administrator (Start menu
+              &rarr; type &ldquo;PowerShell&rdquo; &rarr; right-click &rarr;{" "}
+              <em>Run as administrator</em>) and paste:
+            </p>
+            <pre className="mt-2 overflow-x-auto rounded-lg border border-border/60 bg-muted/40 p-3 text-xs leading-relaxed">
+              <code>{`winget install --id Gyan.FFmpeg --silent`}</code>
+            </pre>
+            <p className="mt-2 text-xs text-muted-foreground">
+              <strong>Then close PowerShell and open a NEW one</strong> so PATH
+              picks up the new install. Verify with{" "}
+              <code className="rounded bg-muted/40 px-1 py-0.5 text-[0.7rem]">
+                ffmpeg -version
+              </code>
+              .
+            </p>
+            <details className="mt-2 text-xs text-muted-foreground">
+              <summary className="cursor-pointer font-medium">
+                No <code>winget</code>? Manual install
+              </summary>
+              <ol className="mt-2 list-decimal space-y-1 pl-5">
+                <li>
+                  Download the &ldquo;release essentials&rdquo; ZIP from{" "}
+                  <Link
+                    href="https://www.gyan.dev/ffmpeg/builds/"
+                    target="_blank"
+                    className="text-primary underline-offset-2 hover:underline"
+                  >
+                    gyan.dev/ffmpeg/builds
+                  </Link>
+                  .
+                </li>
+                <li>
+                  Right-click &rarr; <strong>Extract All&hellip;</strong> &rarr;
+                  move the resulting folder to{" "}
+                  <code>C:\ffmpeg</code> so the path becomes{" "}
+                  <code>C:\ffmpeg\bin\ffmpeg.exe</code>.
+                </li>
+                <li>
+                  Open <strong>PowerShell as Administrator</strong> and paste:
+                </li>
+              </ol>
+              <pre className="mt-2 overflow-x-auto rounded-lg border border-border/60 bg-muted/40 p-3 text-xs leading-relaxed">
+                <code>{`[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\\ffmpeg\\bin", "Machine")`}</code>
+              </pre>
+              <p className="mt-2">
+                Close ALL PowerShell / Command Prompt windows, open a new one,
+                and run <code>ffmpeg -version</code>. If you still see
+                &ldquo;not recognized&rdquo;, restart your PC once.
+              </p>
+            </details>
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold">macOS</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Open <strong>Terminal</strong> (Spotlight &rarr; type
+              &ldquo;Terminal&rdquo;) and paste:
+            </p>
+            <pre className="mt-2 overflow-x-auto rounded-lg border border-border/60 bg-muted/40 p-3 text-xs leading-relaxed">
+              <code>{`# Install Homebrew first if you don't have it:
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Then install FFmpeg:
+brew install ffmpeg
+
+# Verify:
+ffmpeg -version`}</code>
+            </pre>
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold">
+              Linux (Ubuntu / Debian / Mint)
+            </p>
+            <pre className="mt-2 overflow-x-auto rounded-lg border border-border/60 bg-muted/40 p-3 text-xs leading-relaxed">
+              <code>{`sudo apt update
+sudo apt install -y ffmpeg
+ffmpeg -version`}</code>
+            </pre>
+            <p className="mt-2 text-xs text-muted-foreground">
+              On Fedora/RHEL: <code>sudo dnf install ffmpeg</code>. On Arch:{" "}
+              <code>sudo pacman -S ffmpeg</code>.
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-md border border-border/60 bg-muted/30 p-3 text-xs text-muted-foreground">
+          <strong>Verify it worked:</strong> open a NEW terminal window and
+          run{" "}
+          <code className="rounded bg-muted/40 px-1 py-0.5 text-[0.7rem]">
+            ffmpeg -version
+          </code>
+          . You should see &ldquo;ffmpeg version&hellip;&rdquo; followed by
+          build info. If you see &ldquo;ffmpeg not recognized&rdquo; or
+          &ldquo;command not found&rdquo;, FFmpeg isn&apos;t on your PATH yet
+          &mdash; close every terminal window and open a fresh one (PATH only
+          updates for new sessions).
         </p>
       </>
     ),
