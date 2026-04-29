@@ -57,12 +57,18 @@ export default async function SettingsPage() {
         <CardHeader>
           <h2 className="text-lg font-semibold">Billing</h2>
           <p className="text-sm text-muted-foreground">
-            Payments are processed by Stripe. Placeholder while we wire up checkout.
+            Payments are processed manually via EasyPaisa, NayaPay, JazzCash,
+            or Binance Pay. Submit a transaction ID at checkout and an admin
+            activates your license.
           </p>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Once enabled, you&apos;ll manage invoices and receipts here.
+            See your active licenses and pending submissions on the{" "}
+            <a className="underline hover:text-foreground" href="/dashboard">
+              dashboard
+            </a>
+            .
           </p>
         </CardContent>
       </Card>

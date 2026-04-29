@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { PLANS } from "@/lib/plans";
+import { PLANS, formatPrice } from "@/lib/plans";
 
 export const metadata = { title: "Pricing" };
 
@@ -50,12 +50,15 @@ export default function PricingPage() {
                   <CardContent className="flex flex-1 flex-col">
                     <div className="flex items-baseline gap-1">
                       <span className="text-4xl font-semibold tracking-tight">
-                        ${plan.priceUsd}
+                        {formatPrice(plan.pricePkr, "PKR")}
                       </span>
                       <span className="text-sm text-muted-foreground">
                         / {plan.durationLabel}
                       </span>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      or {formatPrice(plan.priceUsdt, "USDT")} via Binance Pay
+                    </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {plan.maxDevices} device{plan.maxDevices > 1 ? "s" : ""} ·{" "}
                       {plan.durationDays} days of access
@@ -66,7 +69,7 @@ export default function PricingPage() {
                       className="mt-6 w-full"
                       variant={plan.popular ? "default" : "outline"}
                     >
-                      <Link href={`/signup?plan=${plan.id}`}>
+                      <Link href={`/checkout?plan=${plan.id}`}>
                         Get {plan.name}
                       </Link>
                     </Button>
@@ -85,8 +88,9 @@ export default function PricingPage() {
             </div>
 
             <p className="mx-auto mt-10 max-w-xl text-center text-xs text-muted-foreground">
-              All plans include a free 10-video trial before you buy. Every plan is
-              a one-time payment — no auto-renewals. Prices in USD, taxes may apply.
+              Free 10-video trial before you buy. Every plan is a one-time
+              payment — no auto-renewals. Pay in PKR via EasyPaisa, NayaPay, or
+              JazzCash, or in USDT via Binance Pay.
             </p>
           </div>
         </section>

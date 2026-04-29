@@ -21,7 +21,7 @@ import { Progress } from "@/components/ui/progress";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
-import { PLANS } from "@/lib/plans";
+import { PLANS, formatPrice, type Currency } from "@/lib/plans";
 import { ActivateLicenseForm } from "./activate-license-form";
 import { DeviceRow } from "./device-row";
 
@@ -44,13 +44,20 @@ export default async function DashboardPage() {
   const session = await auth();
   const userId = (session!.user as { id?: string }).id!;
 
-  const licenses = await prisma.license.findMany({
-    where: { userId },
-    orderBy: { issuedAt: "desc" },
-    include: {
-      devices: { orderBy: { lastSeenAt: "desc" } },
-    },
-  });
+  const [licenses, payments] = await Promise.all([
+    prisma.license.findMany({
+      where: { userId },
+      orderBy: { issuedAt: "desc" },
+      include: {
+        devices: { orderBy: { lastSeenAt: "desc" } },
+      },
+    }),
+    prisma.paymentSubmission.findMany({
+      where: { userId, status: { in: ["PENDING", "REJECTED"] } },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+  ]);
 
   const now = new Date();
   const active = licenses.find((l) => l.status === "ACTIVE" && l.expiresAt > now);
@@ -197,6 +204,49 @@ export default async function DashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Pending / recently-rejected payment submissions */}
+      {payments.length > 0 ? (
+        <Card>
+          <CardHeader className="space-y-1 pb-3">
+            <h3 className="text-base font-semibold">Payment submissions</h3>
+            <p className="text-sm text-muted-foreground">
+              Pending submissions are reviewed by an admin. Once approved, the
+              license appears in &ldquo;Your licenses&rdquo; below.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {payments.map((p) => (
+              <div
+                key={p.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/60 p-3 text-sm"
+              >
+                <div>
+                  <span className="font-medium">{p.plan}</span>
+                  <span className="ml-2 text-muted-foreground">
+                    {formatPrice(p.amount, p.currency as Currency)} via {p.method}
+                  </span>
+                  <div className="mt-1 font-mono text-xs text-muted-foreground">
+                    Txn: {p.txnId}
+                  </div>
+                  {p.status === "REJECTED" && p.reviewerNote ? (
+                    <div className="mt-1 text-xs text-destructive">
+                      Rejected: {p.reviewerNote}
+                    </div>
+                  ) : null}
+                </div>
+                <Badge
+                  variant={
+                    p.status === "PENDING" ? "default" : "destructive"
+                  }
+                >
+                  {p.status}
+                </Badge>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {/* If active, still allow re-activate / activate-on-another-device */}
       {active ? (

@@ -69,18 +69,20 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  licenses      License[]
-  logs          Log[]
+  accounts       Account[]
+  sessions       Session[]
+  licenses       License[]
+  logs           Log[]
+  payments       PaymentSubmission[] @relation("PaymentSubmissions")
+  paymentReviews PaymentSubmission[] @relation("PaymentReviews")
 
   @@index([email])
 }
 
 enum Plan {
-  STARTER   // 1 month, 1 device
-  PRO       // 3 months, 1 device
-  STUDIO    // 1 year, 2 devices
+  STARTER // 1 month, 1 device
+  PRO // 3 months, 1 device
+  STUDIO // 1 year, 2 devices
 }
 
 enum LicenseStatus {
@@ -90,18 +92,19 @@ enum LicenseStatus {
 }
 
 model License {
-  id          String        @id @default(cuid())
-  key         String        @unique  // DGIT-XXXX-XXXX-XXXX-XXXX
-  userId      String
-  plan        Plan
-  maxDevices  Int           @default(1)
-  issuedAt    DateTime      @default(now())
-  expiresAt   DateTime
-  status      LicenseStatus @default(ACTIVE)
-  notes       String?
+  id         String        @id @default(cuid())
+  key        String        @unique // DGIT-XXXX-XXXX-XXXX-XXXX
+  userId     String
+  plan       Plan
+  maxDevices Int           @default(1)
+  issuedAt   DateTime      @default(now())
+  expiresAt  DateTime
+  status     LicenseStatus @default(ACTIVE)
+  notes      String?
 
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  devices     Device[]
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  devices Device[]
+  payment PaymentSubmission?
 
   @@index([userId])
   @@index([key])
@@ -109,17 +112,17 @@ model License {
 }
 
 model Device {
-  id           String   @id @default(cuid())
-  licenseId    String
-  hardwareId   String   // sha256 of CPU+motherboard+MAC
-  platform     String?  // win32, darwin, linux
-  hostname     String?
-  appVersion   String?
-  activatedAt  DateTime @default(now())
-  lastSeenAt   DateTime @default(now())
-  releasedAt   DateTime?
+  id          String    @id @default(cuid())
+  licenseId   String
+  hardwareId  String // sha256 of CPU+motherboard+MAC
+  platform    String? // win32, darwin, linux
+  hostname    String?
+  appVersion  String?
+  activatedAt DateTime  @default(now())
+  lastSeenAt  DateTime  @default(now())
+  releasedAt  DateTime?
 
-  license      License  @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+  license License @relation(fields: [licenseId], references: [id], onDelete: Cascade)
 
   @@unique([licenseId, hardwareId])
   @@index([hardwareId])
@@ -127,28 +130,76 @@ model Device {
 
 // Anonymous per-device trial counter (before signup/license)
 model TrialPing {
-  id           String   @id @default(cuid())
-  deviceFp     String   @unique  // sha256 of CPU+motherboard+MAC
-  videoCount   Int      @default(0)
-  platform     String?
-  appVersion   String?
-  firstSeenAt  DateTime @default(now())
-  lastSeenAt   DateTime @default(now())
+  id          String   @id @default(cuid())
+  deviceFp    String   @unique // sha256 of CPU+motherboard+MAC
+  videoCount  Int      @default(0)
+  platform    String?
+  appVersion  String?
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
 
   @@index([deviceFp])
+}
+
+// Manual payment submissions (EasyPaisa / NayaPay / JazzCash / Binance Pay).
+// User pays out-of-band, submits the transaction id, an admin approves and
+// the approval issues a License keyed back to this submission.
+enum Currency {
+  PKR
+  USDT
+}
+
+enum PaymentMethod {
+  EASYPAISA
+  NAYAPAY
+  JAZZCASH
+  BINANCE
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model PaymentSubmission {
+  id            String        @id @default(cuid())
+  userId        String
+  plan          Plan
+  currency      Currency
+  amount        Int // PKR rupees, or whole USDT (no fractional cents)
+  method        PaymentMethod
+  txnId         String // user-provided transaction id / receipt ref
+  senderName    String?
+  senderContact String?
+  notes         String?       @db.Text
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewerNote  String?       @db.Text
+  licenseId     String?       @unique
+
+  user       User     @relation("PaymentSubmissions", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User?    @relation("PaymentReviews", fields: [reviewedById], references: [id], onDelete: SetNull)
+  license    License? @relation(fields: [licenseId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 // Activity log for admin panel
 model Log {
   id        String   @id @default(cuid())
   userId    String?
-  action    String   // "login", "signup", "license.issue", "license.verify", ...
+  action    String // "login", "signup", "license.issue", "license.verify", ...
   details   String?  @db.Text
   ip        String?
   userAgent String?
   createdAt DateTime @default(now())
 
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([action])

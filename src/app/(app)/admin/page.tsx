@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { Users, KeyRound, ScrollText, Activity } from "lucide-react";
+import { Users, KeyRound, ScrollText, Activity, Receipt } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 
@@ -10,16 +10,23 @@ export const metadata = { title: "Admin" };
 export default async function AdminOverviewPage() {
   const now = new Date();
   const dayAgo = new Date(now.getTime() - 24 * 3600 * 1000);
-  const [userCount, activeLicenses, totalLicenses, trialDevices, last24hLogs] =
-    await Promise.all([
-      prisma.user.count(),
-      prisma.license.count({
-        where: { status: "ACTIVE", expiresAt: { gt: now } },
-      }),
-      prisma.license.count(),
-      prisma.trialPing.count(),
-      prisma.log.count({ where: { createdAt: { gt: dayAgo } } }),
-    ]);
+  const [
+    userCount,
+    activeLicenses,
+    totalLicenses,
+    trialDevices,
+    last24hLogs,
+    pendingPayments,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.license.count({
+      where: { status: "ACTIVE", expiresAt: { gt: now } },
+    }),
+    prisma.license.count(),
+    prisma.trialPing.count(),
+    prisma.log.count({ where: { createdAt: { gt: dayAgo } } }),
+    prisma.paymentSubmission.count({ where: { status: "PENDING" } }),
+  ]);
 
   const stats = [
     { label: "Users", value: userCount, href: "/admin/users", icon: Users },
@@ -28,6 +35,12 @@ export default async function AdminOverviewPage() {
       value: `${activeLicenses} / ${totalLicenses}`,
       href: "/admin/licenses",
       icon: KeyRound,
+    },
+    {
+      label: "Pending payments",
+      value: pendingPayments,
+      href: "/admin/payments",
+      icon: Receipt,
     },
     {
       label: "Trial devices",

@@ -1,43 +1,29 @@
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PLANS, formatPrice } from "@/lib/plans";
 
-const plans = [
-  {
-    name: "Starter",
-    price: "$9",
-    period: "1 month",
-    devices: "1 device",
-    popular: false,
-    features: ["Unlimited video processing", "All quality templates", "Email support"],
-  },
-  {
-    name: "Pro",
-    price: "$19",
-    period: "3 months",
-    devices: "1 device",
-    popular: true,
-    features: [
-      "Everything in Starter",
-      "Save your presets",
-      "Priority support",
-      "Best value per month",
-    ],
-  },
-  {
-    name: "Studio",
-    price: "$59",
-    period: "1 year",
-    devices: "2 devices",
-    popular: false,
-    features: [
-      "Everything in Pro",
-      "2 device activations",
-      "Annual savings (~50%)",
-      "Direct line to support",
-    ],
-  },
-];
+const FEATURES: Record<string, string[]> = {
+  STARTER: ["Unlimited video processing", "All quality templates", "Email support"],
+  PRO: [
+    "Everything in Starter",
+    "Save your presets",
+    "Priority support",
+    "Best value per month",
+  ],
+  STUDIO: [
+    "Everything in Pro",
+    "2 device activations",
+    "Annual savings",
+    "Direct line to support",
+  ],
+};
+
+const DEVICES_LABEL: Record<string, string> = {
+  STARTER: "1 device",
+  PRO: "1 device",
+  STUDIO: "2 devices",
+};
 
 export function PricingTeaser() {
   return (
@@ -57,9 +43,9 @@ export function PricingTeaser() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {plans.map((p) => (
+          {PLANS.map((p) => (
             <div
-              key={p.name}
+              key={p.id}
               className={
                 p.popular
                   ? "relative rounded-2xl border-2 border-brand bg-card p-6 shadow-sm"
@@ -74,17 +60,20 @@ export function PricingTeaser() {
               <div className="text-sm font-semibold">{p.name}</div>
               <div className="mt-3 flex items-baseline gap-1">
                 <div className="text-4xl font-semibold tracking-tight">
-                  {p.price}
+                  {formatPrice(p.pricePkr, "PKR")}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  / {p.period}
+                  / {p.durationLabel}
                 </div>
               </div>
+              <div className="text-xs text-muted-foreground">
+                or {formatPrice(p.priceUsdt, "USDT")} via Binance Pay
+              </div>
               <div className="mt-1 text-xs text-muted-foreground">
-                {p.devices}
+                {DEVICES_LABEL[p.id] ?? "1 device"}
               </div>
               <ul className="mt-6 space-y-2.5 text-sm">
-                {p.features.map((f) => (
+                {(FEATURES[p.id] ?? []).map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Check className="mt-0.5 size-4 shrink-0 text-brand" />
                     <span>{f}</span>
@@ -96,7 +85,7 @@ export function PricingTeaser() {
                 variant={p.popular ? "default" : "outline"}
                 className="mt-6 w-full"
               >
-                <Link href="/pricing">
+                <Link href={`/checkout?plan=${p.id}`}>
                   Choose {p.name}
                   <ArrowRight className="ml-2 size-3.5" />
                 </Link>

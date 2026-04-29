@@ -53,7 +53,7 @@ export default function PrivacyPage() {
           <p>
             We use the following sub-processors: Vercel (hosting), Supabase /
             Postgres (database), and — if you sign in with Google — Google OAuth.
-            Payments are processed by Stripe (no card data touches our servers).
+            Payments are processed manually via EasyPaisa, NayaPay, JazzCash, or Binance Pay — no card data is collected.
           </p>
 
           <h2>Your rights</h2>
