@@ -575,7 +575,7 @@ const USAGE: UsageStep[] = [
         <Expected>
           A green banner: <Inline>License active — Pro plan, expires
           DD/MM/YYYY</Inline>. The trial counter disappears. You can keep using
-          the app offline for up to 7 days between online check-ins.
+          the app offline for up to 30 days between online check-ins.
         </Expected>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button asChild size="sm">
