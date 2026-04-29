@@ -329,19 +329,64 @@ ffmpeg -version`}</CodeBlock>
     body: (
       <>
         <p className="text-sm">
-          Open the <Inline>Digitalinos-v0.2</Inline> folder.
+          Open the <Inline>Digitalinos-v0.2</Inline> folder. Pick the path
+          for your OS below.
         </p>
+
+        <div className="mt-3 rounded-lg border border-border/60 bg-card p-4">
+          <p className="text-sm font-semibold">Windows — recommended (PowerShell)</p>
+          <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm">
+            <li>
+              Press <Inline>Win</Inline> + <Inline>X</Inline> →{" "}
+              <em>Windows PowerShell</em> (or <em>Terminal</em> on
+              Windows 11). A regular user PowerShell is fine — no admin
+              needed.
+            </li>
+            <li>
+              Run, in order:
+              <CodeBlock>{`cd C:\\Digitalinos-v0.2
+python -m venv .venv
+.\\.venv\\Scripts\\Activate.ps1
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`}</CodeBlock>
+              When prompted, press <Inline>Y</Inline> and{" "}
+              <Inline>Enter</Inline>.
+            </li>
+            <li>
+              Then install dependencies and start the app:
+              <CodeBlock>{`python -m pip install --upgrade pip
+pip install -r requirements.txt
+python run.py`}</CodeBlock>
+            </li>
+          </ol>
+          <div className="mt-3 rounded-md border border-border/40 bg-muted/30 p-3 text-xs">
+            <p className="font-semibold text-foreground">
+              If you see <Inline>Activate.ps1 cannot be loaded</Inline>:
+            </p>
+            <p className="mt-1 text-muted-foreground">
+              Run this once in the same PowerShell window, then re-run the
+              activate line above:
+            </p>
+            <CodeBlock>{`Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\\.venv\\Scripts\\Activate.ps1`}</CodeBlock>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Subsequent launches: open PowerShell in the folder and just run{" "}
+            <Inline>.\\.venv\\Scripts\\Activate.ps1</Inline> then{" "}
+            <Inline>python run.py</Inline> — the venv is already set up.
+          </p>
+        </div>
 
         <div className="mt-3 grid gap-3 lg:grid-cols-2">
           <div className="rounded-lg border border-border/60 bg-card p-4">
-            <p className="text-sm font-semibold">Windows</p>
+            <p className="text-sm font-semibold">Windows — quick path</p>
             <p className="mt-1.5 text-sm text-muted-foreground">
-              Double-click <Inline>launch.bat</Inline>.
+              Double-click <Inline>launch.bat</Inline>. It runs the same
+              steps automatically inside a Command Prompt window.
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
               SmartScreen may show a warning the first time — click{" "}
-              <em>More info</em> → <em>Run anyway</em>. (The script is plain
-              text, you can open it in Notepad first to confirm it&apos;s safe.)
+              <em>More info</em> → <em>Run anyway</em>. The script is plain
+              text; open it in Notepad first if you want to inspect it.
             </p>
           </div>
           <div className="rounded-lg border border-border/60 bg-card p-4">
@@ -355,22 +400,28 @@ ffmpeg -version`}</CodeBlock>
         </div>
 
         <Explain>
-          On first run, the launcher creates an isolated Python environment
-          named <Inline>.venv</Inline> inside the folder, then runs{" "}
-          <Inline>pip install -r requirements.txt</Inline> to download PyQt6
-          (the GUI framework), Pillow (image processing), and ffmpeg-python
-          (FFmpeg bindings). Everything stays inside the folder — uninstall =
-          delete the folder.
+          The first launch creates an isolated Python environment in{" "}
+          <Inline>.venv</Inline>, upgrades <Inline>pip</Inline>, then
+          installs PyQt5 (the GUI framework), Pillow (image processing),
+          and the other dependencies listed in{" "}
+          <Inline>requirements.txt</Inline>. Everything stays inside the
+          folder — uninstall = delete the folder.
         </Explain>
 
         <Expected>
-          You&apos;ll see a black/white terminal window scrolling text like{" "}
-          <Inline>Collecting PyQt6...</Inline>,{" "}
-          <Inline>Downloading PyQt6_Qt6-6.x.x...</Inline>, then{" "}
+          You&apos;ll see PowerShell scroll text like{" "}
+          <Inline>Collecting PyQt5...</Inline>,{" "}
+          <Inline>Downloading PyQt5_Qt5-5.x.x...</Inline>, then{" "}
           <Inline>Successfully installed&hellip;</Inline>. After 60&ndash;90
           seconds the <strong>Digitalinos app window</strong> opens. Every
           subsequent launch is instant (the venv is reused).
         </Expected>
+
+        <div className="mt-4 rounded-md border border-border/40 bg-muted/30 p-3 text-xs text-muted-foreground">
+          <strong className="text-foreground">Stuck on an error?</strong>{" "}
+          Paste the exact PowerShell text or a screenshot in your support
+          email and we&apos;ll fix it line-by-line.
+        </div>
       </>
     ),
   },
