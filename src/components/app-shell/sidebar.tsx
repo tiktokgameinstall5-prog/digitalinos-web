@@ -10,6 +10,8 @@ import {
   Users,
   KeyRound,
   ScrollText,
+  Receipt,
+  FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/marketing/logo";
@@ -24,7 +26,9 @@ const adminLinks = [
   { href: "/admin", label: "Admin overview", icon: ShieldCheck },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/licenses", label: "Licenses", icon: KeyRound },
+  { href: "/admin/payments", label: "Payments", icon: Receipt },
   { href: "/admin/logs", label: "Logs", icon: ScrollText },
+  { href: "/admin/test-mode", label: "Test mode", icon: FlaskConical },
 ];
 
 export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
