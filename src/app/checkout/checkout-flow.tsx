@@ -12,11 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
+  durationDiscountPercent,
   formatDurationMonths,
   formatPrice,
   getPlan,
   MONTHLY_OPTIONS,
   planPriceFor,
+  planSavingsFor,
+  planSubtotal,
   type Currency,
   type DurationMonths,
   type PlanId,
@@ -109,6 +112,16 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
               <p className="mt-1 text-2xl font-semibold tracking-tight">
                 {formatPrice(amount, currency)}
               </p>
+              {planSavingsFor(plan, currency, months) > 0 ? (
+                <p className="mt-0.5 text-xs text-brand">
+                  {durationDiscountPercent(months)}% off &middot; save{" "}
+                  {formatPrice(planSavingsFor(plan, currency, months), currency)}{" "}
+                  vs.{" "}
+                  <span className="text-muted-foreground line-through">
+                    {formatPrice(planSubtotal(plan, currency, months), currency)}
+                  </span>
+                </p>
+              ) : null}
             </div>
           ) : null}
         </CardContent>
@@ -130,6 +143,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
           {MONTHLY_OPTIONS.map((m) => {
             const pricePkr = planPriceFor(plan, "PKR", m);
             const priceUsdt = planPriceFor(plan, "USDT", m);
+            const discount = durationDiscountPercent(m);
             return (
               <DurationButton
                 key={m}
@@ -137,6 +151,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
                 onClick={() => setMonths(m)}
                 title={formatDurationMonths(m)}
                 subtitle={`Rs. ${pricePkr.toLocaleString("en-PK")} · $${priceUsdt}`}
+                discount={discount}
                 isDefault={m === planDetails.defaultMonths}
               />
             );
@@ -329,12 +344,14 @@ function DurationButton({
   onClick,
   title,
   subtitle,
+  discount,
   isDefault,
 }: {
   active: boolean;
   onClick: () => void;
   title: string;
   subtitle: string;
+  discount: number;
   isDefault: boolean;
 }) {
   return (
@@ -342,7 +359,7 @@ function DurationButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-lg border p-3 text-left transition-colors",
+        "relative rounded-lg border p-3 text-left transition-colors",
         active
           ? "border-brand bg-brand/5"
           : "border-border/60 hover:bg-muted/40",
@@ -350,7 +367,11 @@ function DurationButton({
     >
       <div className="flex items-center justify-between gap-2">
         <span className="text-sm font-semibold">{title}</span>
-        {isDefault ? (
+        {discount > 0 ? (
+          <Badge className="bg-brand text-brand-foreground text-[10px]">
+            −{discount}%
+          </Badge>
+        ) : isDefault ? (
           <Badge variant="secondary" className="text-[10px]">
             Default
           </Badge>

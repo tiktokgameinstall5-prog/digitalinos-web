@@ -62,12 +62,13 @@ export function PricingTeaser() {
                 <div className="text-4xl font-semibold tracking-tight">
                   {formatPrice(p.pricePkr, "PKR")}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  / {p.durationLabel}
-                </div>
+                <div className="text-sm text-muted-foreground">/ month</div>
               </div>
               <div className="text-xs text-muted-foreground">
-                or {formatPrice(p.priceUsdt, "USDT")} via Binance Pay
+                or {formatPrice(p.priceUsdt, "USDT")} / month via Binance Pay
+              </div>
+              <div className="mt-1 text-xs text-brand">
+                Up to 30% off with 12 months
               </div>
               <div className="mt-1 text-xs text-muted-foreground">
                 {DEVICES_LABEL[p.id] ?? "1 device"}

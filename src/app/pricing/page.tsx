@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { PLANS, formatPrice } from "@/lib/plans";
+import { PLANS, formatPrice, planPriceFor } from "@/lib/plans";
 
 export const metadata = { title: "Pricing" };
 
@@ -53,11 +53,17 @@ export default function PricingPage() {
                         {formatPrice(plan.pricePkr, "PKR")}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        / {plan.durationLabel}
+                        / month
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      or {formatPrice(plan.priceUsdt, "USDT")} via Binance Pay
+                      or {formatPrice(plan.priceUsdt, "USDT")} / month via Binance Pay
+                    </p>
+                    <p className="mt-2 text-xs text-brand">
+                      Save up to 30% with 12 months &middot;{" "}
+                      <span className="text-muted-foreground">
+                        e.g. {formatPrice(planPriceFor(plan.id, "PKR", 12), "PKR")} / year
+                      </span>
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {plan.maxDevices} device{plan.maxDevices > 1 ? "s" : ""} ·
