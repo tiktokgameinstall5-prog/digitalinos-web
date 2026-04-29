@@ -88,40 +88,57 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/*
+ * Dark theme — zinc background + bold Digitalinos teal accents.
+ * Tuned to roughly: zinc-950 (page), zinc-900 (cards), zinc-800 (muted),
+ * zinc-700 (borders), with teal-400 ish for primary/brand.
+ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.75 0.13 200);
+  /* Zinc-950 (#09090b) ≈ oklch(0.155 0.005 286) */
+  --background: oklch(0.155 0.005 286);
+  /* Foreground slightly off-white so it doesn't feel harsh */
+  --foreground: oklch(0.97 0.005 286);
+  /* Zinc-900 (#18181b) for cards — small lift over the page bg */
+  --card: oklch(0.205 0.005 286);
+  --card-foreground: oklch(0.97 0.005 286);
+  --popover: oklch(0.205 0.005 286);
+  --popover-foreground: oklch(0.97 0.005 286);
+
+  /* Bolder teal so it pops against zinc — closer to teal-400. */
+  --primary: oklch(0.78 0.15 195);
   --primary-foreground: oklch(0.145 0 0);
-  --brand: oklch(0.75 0.13 200);
+  --brand: oklch(0.78 0.15 195);
   --brand-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+
+  /* Zinc-800 (#27272a) ≈ oklch(0.27 0.005 286) */
+  --secondary: oklch(0.27 0.005 286);
+  --secondary-foreground: oklch(0.97 0.005 286);
+  --muted: oklch(0.235 0.005 286);
+  --muted-foreground: oklch(0.7 0.01 286);
+  --accent: oklch(0.27 0.005 286);
+  --accent-foreground: oklch(0.97 0.005 286);
+
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Zinc-700-ish hairlines */
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 13%);
+  /* Teal ring so focus states match the accent. */
+  --ring: oklch(0.78 0.15 195);
+
+  --chart-1: oklch(0.78 0.15 195);
+  --chart-2: oklch(0.7 0.13 195);
+  --chart-3: oklch(0.6 0.11 195);
+  --chart-4: oklch(0.5 0.09 195);
+  --chart-5: oklch(0.4 0.07 195);
+
+  --sidebar: oklch(0.18 0.005 286);
+  --sidebar-foreground: oklch(0.97 0.005 286);
+  --sidebar-primary: oklch(0.78 0.15 195);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.235 0.005 286);
+  --sidebar-accent-foreground: oklch(0.97 0.005 286);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: oklch(0.78 0.15 195);
 }
 
 @layer base {

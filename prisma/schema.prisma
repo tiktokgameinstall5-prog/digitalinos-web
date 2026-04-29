@@ -163,22 +163,25 @@ enum PaymentStatus {
 }
 
 model PaymentSubmission {
-  id            String        @id @default(cuid())
-  userId        String
-  plan          Plan
-  currency      Currency
-  amount        Int // PKR rupees, or whole USDT (no fractional cents)
-  method        PaymentMethod
-  txnId         String // user-provided transaction id / receipt ref
-  senderName    String?
-  senderContact String?
-  notes         String?       @db.Text
-  status        PaymentStatus @default(PENDING)
-  createdAt     DateTime      @default(now())
-  reviewedAt    DateTime?
-  reviewedById  String?
-  reviewerNote  String?       @db.Text
-  licenseId     String?       @unique
+  id              String        @id @default(cuid())
+  userId          String
+  plan            Plan
+  currency        Currency
+  amount          Int // PKR rupees, or whole USDT (no fractional cents)
+  /// Subscription length the user chose at checkout. Defaults to 1 so legacy
+  /// rows (created before the duration picker shipped) read back sensibly.
+  durationMonths  Int           @default(1)
+  method          PaymentMethod
+  txnId           String // user-provided transaction id / receipt ref
+  senderName      String?
+  senderContact   String?
+  notes           String?       @db.Text
+  status          PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  reviewedAt      DateTime?
+  reviewedById    String?
+  reviewerNote    String?       @db.Text
+  licenseId       String?       @unique
 
   user       User     @relation("PaymentSubmissions", fields: [userId], references: [id], onDelete: Cascade)
   reviewedBy User?    @relation("PaymentReviews", fields: [reviewedById], references: [id], onDelete: SetNull)

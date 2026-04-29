@@ -8,13 +8,29 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { logAction } from "@/lib/logger";
-import { planPrice, type Currency, type PlanId } from "@/lib/plans";
+import {
+  MONTHLY_OPTIONS,
+  planPriceFor,
+  type Currency,
+  type DurationMonths,
+  type PlanId,
+} from "@/lib/plans";
 import { getMethod } from "@/lib/payment-methods";
+
+const monthsLiteral = z.union(
+  MONTHLY_OPTIONS.map((m) => z.literal(m)) as [
+    z.ZodLiteral<1>,
+    z.ZodLiteral<3>,
+    z.ZodLiteral<6>,
+    z.ZodLiteral<12>,
+  ],
+);
 
 const schema = z.object({
   plan: z.enum(["STARTER", "PRO", "STUDIO"]),
   currency: z.enum(["PKR", "USDT"]),
   method: z.enum(["EASYPAISA", "NAYAPAY", "JAZZCASH", "BINANCE"]),
+  durationMonths: monthsLiteral,
   txnId: z.string().trim().min(4).max(120),
   senderName: z.string().trim().max(120).optional(),
   senderContact: z.string().trim().max(120).optional(),
@@ -50,7 +66,12 @@ export async function POST(req: Request) {
     );
   }
 
-  const amount = planPrice(data.plan as PlanId, data.currency as Currency);
+  const months = data.durationMonths as DurationMonths;
+  const amount = planPriceFor(
+    data.plan as PlanId,
+    data.currency as Currency,
+    months,
+  );
 
   const submission = await prisma.paymentSubmission.create({
     data: {
@@ -59,12 +80,20 @@ export async function POST(req: Request) {
       currency: data.currency,
       method: data.method,
       amount,
+      durationMonths: months,
       txnId: data.txnId,
       senderName: data.senderName,
       senderContact: data.senderContact,
       notes: data.notes,
     },
-    select: { id: true, status: true, plan: true, amount: true, currency: true },
+    select: {
+      id: true,
+      status: true,
+      plan: true,
+      amount: true,
+      currency: true,
+      durationMonths: true,
+    },
   });
 
   await logAction(
@@ -76,6 +105,7 @@ export async function POST(req: Request) {
       currency: data.currency,
       method: data.method,
       amount,
+      months,
     },
     req,
   );

@@ -60,8 +60,8 @@ export default function PricingPage() {
                       or {formatPrice(plan.priceUsdt, "USDT")} via Binance Pay
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {plan.maxDevices} device{plan.maxDevices > 1 ? "s" : ""} ·{" "}
-                      {plan.durationDays} days of access
+                      {plan.maxDevices} device{plan.maxDevices > 1 ? "s" : ""} ·
+                      pick 1 / 3 / 6 / 12 month duration at checkout
                     </p>
 
                     <Button
