@@ -21,8 +21,8 @@ import { Badge } from "@/components/ui/badge";
 
 
 
-const ZIP_HREF = "/downloads/Digitalinos-v0.2.zip";
-const ZIP_FILENAME = "Digitalinos-v0.2.zip";
+const ZIP_HREF = "/downloads/Digitalinos-v0.2.1.zip";
+const ZIP_FILENAME = "Digitalinos-v0.2.1.zip";
 
 function CodeBlock({ children }: { children: string }) {
   return (
