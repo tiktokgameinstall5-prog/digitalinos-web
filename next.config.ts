@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
       .map((s) => s.trim())
       .filter(Boolean)),
   ],
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/download",
+        destination: "/install",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

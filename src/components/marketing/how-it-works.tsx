@@ -4,7 +4,7 @@ const steps = [
   {
     n: "01",
     title: "Download Digitalinos",
-    body: "Single ZIP, ~46 KB. No installer signup, no GitHub redirect, no \"freemium\" sign-up wall. Works on Windows, macOS, and Linux.",
+    body: "Single ZIP, ~70 KB. No installer signup, no GitHub redirect, no \"freemium\" sign-up wall. Works on Windows, macOS, and Linux.",
     icon: Download,
   },
   {
@@ -29,7 +29,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="border-t border-border/60 py-20 sm:py-28">
+    <section id="how" className="border-t border-border/60 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand">
@@ -43,11 +43,11 @@ export function HowItWorks() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((s) => (
             <div
               key={s.n}
-              className="relative rounded-xl border border-border/60 bg-card p-6"
+              className="relative rounded-xl border border-border/60 bg-card p-5"
             >
               <div className="flex items-start justify-between">
                 <div className="inline-flex size-10 items-center justify-center rounded-lg bg-brand/10 text-brand">

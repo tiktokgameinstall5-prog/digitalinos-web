@@ -74,7 +74,7 @@ function Cell({ value }: { value: boolean | string }) {
 
 export function Comparison() {
   return (
-    <section className="border-t border-border/60 py-20 sm:py-24">
+    <section className="border-t border-border/60 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand">
@@ -85,9 +85,9 @@ export function Comparison() {
           </h2>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-2xl border border-border/60 bg-card">
+        <div className="mt-10 overflow-hidden rounded-2xl border border-border/60 bg-card">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30">
                   <th className="px-5 py-4 text-left font-medium text-muted-foreground">

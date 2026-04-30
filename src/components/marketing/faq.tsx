@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: "Does it work offline?",
-    a: "Yes — after the first license check-in, the app works offline for up to 7 days before it asks you to reconnect briefly to re-verify.",
+    a: "Yes — after the first license check-in, the app works offline for up to 30 days before it asks you to reconnect briefly to re-verify.",
   },
   {
     q: "Which platforms are supported?",
@@ -27,14 +27,14 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="border-t border-border/60 py-20 sm:py-24">
+    <section id="faq" className="border-t border-border/60 py-16 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
             Frequently asked
           </h2>
         </div>
-        <dl className="mt-12 space-y-4">
+        <dl className="mt-10 space-y-4">
           {faqs.map((f) => (
             <div
               key={f.q}

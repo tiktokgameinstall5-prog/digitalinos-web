@@ -1,8 +1,8 @@
-import { ShieldCheck, Cpu, Lock, Infinity as InfinityIcon } from "lucide-react";
+import { ShieldCheck, Cpu, Package, Infinity as InfinityIcon } from "lucide-react";
 
 const items = [
   { icon: Cpu, text: "Runs on your CPU/GPU — never the cloud" },
-  { icon: Lock, text: "Source-available Python — auditable" },
+  { icon: Package, text: "Single signed .exe — no install hell" },
   { icon: ShieldCheck, text: "Hardware-bound license keys" },
   { icon: InfinityIcon, text: "Unlimited videos on every paid plan" },
 ];
