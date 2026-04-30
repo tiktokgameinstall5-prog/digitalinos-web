@@ -19,12 +19,12 @@ const schema = z.object({
 
   ADMIN_EMAIL: z.string().email().optional(),
   FREE_TRIAL_VIDEO_LIMIT: z.string().default("10"),
-  OFFLINE_GRACE_DAYS: z.string().default("7"),
+  OFFLINE_GRACE_DAYS: z.string().default("30"),
 
   NEXT_PUBLIC_APP_NAME: z.string().default("Digitalinos"),
   NEXT_PUBLIC_APP_URL: z.string().default("http://localhost:3000"),
   NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL: z.string().default(
-    "https://github.com/munnataiwan123-gif/video-batch-pro/releases/latest",
+    "/downloads/Digitalinos-v0.2.1.zip",
   ),
 });
 
@@ -43,5 +43,5 @@ export const env = {
     process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET,
   ),
   FREE_TRIAL_VIDEO_LIMIT_N: Number(process.env.FREE_TRIAL_VIDEO_LIMIT ?? 10),
-  OFFLINE_GRACE_DAYS_N: Number(process.env.OFFLINE_GRACE_DAYS ?? 7),
+  OFFLINE_GRACE_DAYS_N: Number(process.env.OFFLINE_GRACE_DAYS ?? 30),
 };

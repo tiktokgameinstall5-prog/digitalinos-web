@@ -1,6 +1,6 @@
 const stats = [
   { value: "100%", label: "Offline processing" },
-  { value: "10×", label: "Faster than manual exports" },
+  { value: "30d", label: "Offline grace after activation" },
   { value: "0", label: "Watermarks on output" },
   { value: "1", label: "Click to launch" },
 ];

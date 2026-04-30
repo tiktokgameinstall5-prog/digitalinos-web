@@ -60,7 +60,7 @@ export default function PrivacyPage() {
           <p>
             You can delete your account and all associated data from the settings
             page at any time. For requests under GDPR/CCPA, email{" "}
-            <a href="mailto:privacy@digitalinos.app">privacy@digitalinos.app</a>.
+            <a href="mailto:tiktokgameinstall6@gmail.com">tiktokgameinstall6@gmail.com</a>.
           </p>
         </article>
       </main>

@@ -12,10 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
+  durationDiscountPercent,
+  formatDurationMonths,
   formatPrice,
   getPlan,
-  planPrice,
+  MONTHLY_OPTIONS,
+  planPriceFor,
+  planSavingsFor,
+  planSubtotal,
   type Currency,
+  type DurationMonths,
   type PlanId,
 } from "@/lib/plans";
 import {
@@ -32,6 +38,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const planDetails = getPlan(plan);
+  const [months, setMonths] = useState<DurationMonths>(planDetails.defaultMonths);
   const [currency, setCurrency] = useState<Currency | null>(initialCurrency);
   const [method, setMethod] = useState<PaymentMethodId | null>(null);
 
@@ -40,7 +47,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
     [currency],
   );
 
-  const amount = currency ? planPrice(plan, currency) : null;
+  const amount = currency ? planPriceFor(plan, currency, months) : null;
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -65,6 +72,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
           plan,
           currency,
           method,
+          durationMonths: months,
           txnId,
           senderName,
           senderContact,
@@ -92,7 +100,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
             </p>
             <h2 className="mt-1 text-xl font-semibold">{planDetails.name}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {planDetails.durationLabel} · {planDetails.maxDevices} device
+              {formatDurationMonths(months)} · {planDetails.maxDevices} device
               {planDetails.maxDevices > 1 ? "s" : ""}
             </p>
           </div>
@@ -104,16 +112,58 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
               <p className="mt-1 text-2xl font-semibold tracking-tight">
                 {formatPrice(amount, currency)}
               </p>
+              {planSavingsFor(plan, currency, months) > 0 ? (
+                <p className="mt-0.5 text-xs text-brand">
+                  {durationDiscountPercent(months)}% off &middot; save{" "}
+                  {formatPrice(planSavingsFor(plan, currency, months), currency)}{" "}
+                  vs.{" "}
+                  <span className="text-muted-foreground line-through">
+                    {formatPrice(planSubtotal(plan, currency, months), currency)}
+                  </span>
+                </p>
+              ) : null}
             </div>
           ) : null}
         </CardContent>
       </Card>
 
-      {/* Step 1: currency picker */}
+      {/* Step 1: duration */}
       <Card>
         <CardHeader>
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Step 1
+          </p>
+          <h3 className="text-base font-semibold">Choose your duration</h3>
+          <p className="text-sm text-muted-foreground">
+            Pick how long you want the licence to last. Total scales linearly
+            with the duration.
+          </p>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {MONTHLY_OPTIONS.map((m) => {
+            const pricePkr = planPriceFor(plan, "PKR", m);
+            const priceUsdt = planPriceFor(plan, "USDT", m);
+            const discount = durationDiscountPercent(m);
+            return (
+              <DurationButton
+                key={m}
+                active={months === m}
+                onClick={() => setMonths(m)}
+                title={formatDurationMonths(m)}
+                subtitle={`Rs. ${pricePkr.toLocaleString("en-PK")} · $${priceUsdt}`}
+                discount={discount}
+                isDefault={m === planDetails.defaultMonths}
+              />
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* Step 2: currency picker */}
+      <Card>
+        <CardHeader>
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Step 2
           </p>
           <h3 className="text-base font-semibold">
             Choose how you want to pay
@@ -128,7 +178,7 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
             }}
             title="Pakistani Rupees"
             subtitle="EasyPaisa · NayaPay · JazzCash"
-            price={formatPrice(planDetails.pricePkr, "PKR")}
+            price={formatPrice(planPriceFor(plan, "PKR", months), "PKR")}
           />
           <CurrencyButton
             active={currency === "USDT"}
@@ -138,17 +188,17 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
             }}
             title="USDT"
             subtitle="Binance Pay only"
-            price={formatPrice(planDetails.priceUsdt, "USDT")}
+            price={formatPrice(planPriceFor(plan, "USDT", months), "USDT")}
           />
         </CardContent>
       </Card>
 
-      {/* Step 2: payment method instructions */}
+      {/* Step 3: payment method instructions */}
       {currency ? (
         <Card>
           <CardHeader>
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Step 2
+              Step 3
             </p>
             <h3 className="text-base font-semibold">
               {currency === "PKR"
@@ -160,7 +210,8 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
               <span className="font-medium text-foreground">
                 {amount != null ? formatPrice(amount, currency) : ""}
               </span>{" "}
-              and copy the transaction ID from your receipt.
+              for {formatDurationMonths(months)} of {planDetails.name} and copy
+              the transaction ID from your receipt.
             </p>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -215,12 +266,12 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
         </Card>
       ) : null}
 
-      {/* Step 3: transaction id form */}
+      {/* Step 4: transaction id form */}
       {currency && method ? (
         <Card>
           <CardHeader>
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Step 3
+              Step 4
             </p>
             <h3 className="text-base font-semibold">
               Submit your transaction ID
@@ -271,13 +322,13 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-2">
                 <Link
-                  href="/dashboard"
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  href="/pricing"
+                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
                 >
-                  I&apos;ll come back later
+                  ← Back to pricing
                 </Link>
                 <Button type="submit" disabled={pending}>
-                  {pending ? "Submitting…" : "Submit for review"}
+                  {pending ? "Submitting…" : "Submit payment for review"}
                 </Button>
               </div>
             </form>
@@ -285,6 +336,49 @@ export function CheckoutFlow({ plan, initialCurrency }: CheckoutFlowProps) {
         </Card>
       ) : null}
     </div>
+  );
+}
+
+function DurationButton({
+  active,
+  onClick,
+  title,
+  subtitle,
+  discount,
+  isDefault,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  subtitle: string;
+  discount: number;
+  isDefault: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "relative rounded-lg border p-3 text-left transition-colors",
+        active
+          ? "border-brand bg-brand/5"
+          : "border-border/60 hover:bg-muted/40",
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold">{title}</span>
+        {discount > 0 ? (
+          <Badge className="bg-brand text-brand-foreground text-[10px]">
+            −{discount}%
+          </Badge>
+        ) : isDefault ? (
+          <Badge variant="secondary" className="text-[10px]">
+            Default
+          </Badge>
+        ) : null}
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
+    </button>
   );
 }
 
@@ -314,44 +408,38 @@ function CurrencyButton({
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="font-semibold">{title}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
-            {subtitle}
-          </div>
+          <p className="text-sm font-semibold">{title}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>
         </div>
-        <div className="text-right text-sm font-semibold">{price}</div>
+        <p className="text-base font-semibold">{price}</p>
       </div>
     </button>
   );
 }
 
 function CopyRow({ label, value }: { label: string; value: string }) {
-  const [copied, setCopied] = useState(false);
   function copy() {
     navigator.clipboard
       .writeText(value)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      })
-      .catch(() => {
-        toast.error("Could not copy");
-      });
+      .then(() => toast.success(`${label} copied.`))
+      .catch(() => toast.error("Could not copy."));
   }
+
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-muted-foreground">{label}:</span>
-      <span className="font-mono text-sm">{value}</span>
+    <div className="flex items-center justify-between gap-3 rounded border border-border/40 bg-muted/30 px-3 py-1.5">
+      <div>
+        <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          {label}
+        </dt>
+        <dd className="font-mono text-sm">{value}</dd>
+      </div>
       <button
         type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          copy();
-        }}
-        className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        onClick={copy}
+        className="rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground"
         aria-label={`Copy ${label}`}
       >
-        {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+        <Copy className="size-3.5" />
       </button>
     </div>
   );

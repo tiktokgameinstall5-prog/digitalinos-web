@@ -20,8 +20,8 @@ export default function ForgotPage() {
       <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
         Password reset emails are not enabled yet. For now, please contact
         support at{" "}
-        <a href="mailto:support@digitalinos.app" className="underline">
-          support@digitalinos.app
+        <a href="mailto:tiktokgameinstall6@gmail.com" className="underline">
+          tiktokgameinstall6@gmail.com
         </a>{" "}
         and we&apos;ll reset it manually within a few hours.
       </div>

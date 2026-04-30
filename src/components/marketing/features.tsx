@@ -42,7 +42,7 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="border-t border-border/60 py-20 sm:py-28">
+    <section id="features" className="border-t border-border/60 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -53,11 +53,11 @@ export function Features() {
             identical, fast.
           </p>
         </div>
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f) => (
             <div
               key={f.title}
-              className="group rounded-xl border border-border/60 bg-card p-6 transition-colors hover:border-border"
+              className="group rounded-xl border border-border/60 bg-card p-5 transition-colors hover:border-border"
             >
               <div className="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-brand/10 text-brand">
                 <f.icon className="size-5" />

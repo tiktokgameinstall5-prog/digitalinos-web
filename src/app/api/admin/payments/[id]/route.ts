@@ -8,11 +8,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdminFromSession } from "@/lib/require-admin";
 import { logAction } from "@/lib/logger";
-import {
-  generateLicenseKey,
-  planDurationDays,
-  planMaxDevices,
-} from "@/lib/license";
+import { generateLicenseKey, planMaxDevices } from "@/lib/license";
 
 const schema = z.object({
   action: z.enum(["approve", "reject"]),
@@ -79,7 +75,11 @@ export async function POST(
     if (!exists) break;
     key = generateLicenseKey();
   }
-  const days = planDurationDays(submission.plan);
+  // License length comes from the duration the user actually paid for at
+  // checkout (1/3/6/12 months). Use 30 days/month — matches what the
+  // checkout UI advertises.
+  const months = submission.durationMonths > 0 ? submission.durationMonths : 1;
+  const days = months * 30;
   const maxDevices = planMaxDevices(submission.plan);
   const expiresAt = new Date(Date.now() + days * 24 * 3600 * 1000);
 
@@ -91,7 +91,7 @@ export async function POST(
         userId: submission.userId,
         maxDevices,
         expiresAt,
-        notes: `Approved payment ${submission.id} (${submission.method} ${submission.currency} ${submission.amount}, txn ${submission.txnId})`,
+        notes: `Approved payment ${submission.id} (${submission.method} ${submission.currency} ${submission.amount} for ${months}mo, txn ${submission.txnId})`,
       },
     });
     const updated = await tx.paymentSubmission.update({

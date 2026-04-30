@@ -65,7 +65,7 @@ export default function TermsPage() {
 
           <h2>Contact</h2>
           <p>
-            Questions: <a href="mailto:support@digitalinos.app">support@digitalinos.app</a>
+            Questions: <a href="mailto:tiktokgameinstall6@gmail.com">tiktokgameinstall6@gmail.com</a>
           </p>
         </article>
       </main>

@@ -3,8 +3,8 @@ import { Logo } from "./logo";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border/60 bg-background">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
+    <footer className="mt-16 border-t border-border/60 bg-background">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4">
         <div className="space-y-3">
           <Logo />
           <p className="max-w-xs text-sm text-muted-foreground">
@@ -15,15 +15,12 @@ export function Footer() {
         <Column title="Product">
           <FooterLink href="/#features">Features</FooterLink>
           <FooterLink href="/pricing">Pricing</FooterLink>
-          <FooterLink href="/signup">Download</FooterLink>
+          <FooterLink href="/install">Download</FooterLink>
         </Column>
         <Column title="Support">
           <FooterLink href="/#faq">FAQ</FooterLink>
-          <FooterLink href="mailto:support@digitalinos.app">
+          <FooterLink href="mailto:tiktokgameinstall6@gmail.com">
             Email support
-          </FooterLink>
-          <FooterLink href="https://github.com/munnataiwan123-gif/video-batch-pro">
-            GitHub
           </FooterLink>
         </Column>
         <Column title="Legal">

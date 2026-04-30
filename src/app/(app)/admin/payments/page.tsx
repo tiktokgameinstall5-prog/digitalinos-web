@@ -11,7 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { prisma } from "@/lib/prisma";
-import { formatPrice, type Currency } from "@/lib/plans";
+import {
+  formatDurationMonths,
+  formatPrice,
+  isValidMonths,
+  type Currency,
+  type DurationMonths,
+} from "@/lib/plans";
+import { LicenseKeyCell } from "./license-key-cell";
 import { PaymentRowActions } from "./payment-row-actions";
 
 export const metadata = { title: "Payments" };
@@ -80,10 +87,12 @@ export default async function AdminPaymentsPage() {
                   <TableHead>Submitted</TableHead>
                   <TableHead>User</TableHead>
                   <TableHead>Plan</TableHead>
+                  <TableHead>Duration</TableHead>
                   <TableHead>Method</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Txn ID</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>License key</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -102,6 +111,11 @@ export default async function AdminPaymentsPage() {
                       ) : null}
                     </TableCell>
                     <TableCell>{s.plan}</TableCell>
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {isValidMonths(s.durationMonths)
+                        ? formatDurationMonths(s.durationMonths as DurationMonths)
+                        : `${s.durationMonths} mo`}
+                    </TableCell>
                     <TableCell>
                       {METHOD_LABELS[s.method] ?? s.method}
                     </TableCell>
@@ -115,11 +129,15 @@ export default async function AdminPaymentsPage() {
                       <Badge variant={STATUS_VARIANTS[s.status]}>
                         {s.status}
                       </Badge>
-                      {s.status === "APPROVED" && s.license ? (
-                        <div className="mt-1 font-mono text-[10px] text-muted-foreground">
-                          {s.license.key}
-                        </div>
-                      ) : null}
+                    </TableCell>
+                    <TableCell>
+                      {s.license?.key ? (
+                        <LicenseKeyCell licenseKey={s.license.key} />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          —
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       {s.status === "PENDING" ? (
@@ -137,7 +155,7 @@ export default async function AdminPaymentsPage() {
                 {submissions.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={8}
+                      colSpan={10}
                       className="text-center text-muted-foreground"
                     >
                       No payment submissions yet.

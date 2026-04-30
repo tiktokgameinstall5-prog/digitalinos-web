@@ -7,7 +7,6 @@ import { HowItWorks } from "@/components/marketing/how-it-works";
 import { Stats } from "@/components/marketing/stats";
 import { Comparison } from "@/components/marketing/comparison";
 import { PricingTeaser } from "@/components/marketing/pricing-teaser";
-import { Testimonials } from "@/components/marketing/testimonials";
 import { FAQ } from "@/components/marketing/faq";
 import { CTA } from "@/components/marketing/cta";
 
@@ -23,7 +22,6 @@ export default function HomePage() {
         <Stats />
         <Comparison />
         <PricingTeaser />
-        <Testimonials />
         <FAQ />
         <CTA />
       </main>

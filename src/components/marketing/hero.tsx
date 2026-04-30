@@ -3,35 +3,21 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Download } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28">
+    <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-[radial-gradient(ellipse_60%_60%_at_50%_0%,rgba(27,181,196,0.18),transparent_70%)]"
       />
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        >
-          <Badge
-            variant="secondary"
-            className="mb-5 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground"
-          >
-            <span className="mr-2 inline-block size-1.5 rounded-full bg-brand" />
-            v0.2 · Bouncing overlays, quality templates, 1-click launcher
-          </Badge>
-        </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.05, ease: "easeOut" }}
-          className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl"
+          className="text-balance text-[2.5rem] font-semibold leading-[1.05] sm:text-5xl md:text-[3.25rem]"
         >
           Batch video processing,{" "}
           <span className="text-brand">offline and unlimited.</span>
@@ -52,7 +38,7 @@ export function Hero() {
           transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}
           className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
-          <Button asChild size="lg" className="h-11 px-6 text-sm font-medium">
+          <Button asChild size="lg" className="h-10 px-5 text-sm font-medium">
             <Link href="/install">
               <Download className="mr-2 size-4" />
               Get started — free
@@ -62,7 +48,7 @@ export function Hero() {
             asChild
             size="lg"
             variant="outline"
-            className="h-11 px-6 text-sm font-medium"
+            className="h-10 px-5 text-sm font-medium"
           >
             <Link href="/#how">
               How it works
@@ -122,7 +108,7 @@ export function Hero() {
                 </div>
               ))}
             </div>
-            <div className="rounded-lg border border-border/60 bg-background/80 p-4">
+            <div className="hidden rounded-lg border border-border/60 bg-background/80 p-4 md:block">
               <p className="text-xs font-medium text-muted-foreground">
                 Quality template
               </p>
