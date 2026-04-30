@@ -2,7 +2,11 @@
 // Postgres + Prisma + NextAuth adapter
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Vercel runs Node lambdas on AL2 (rhel-openssl-3.0.x). Local dev (Devin VM)
+  // is debian-openssl-3.0.x. We need both so the CLI-built deploy doesn't 500
+  // with "could not locate the Query Engine for runtime rhel-openssl-3.0.x".
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
